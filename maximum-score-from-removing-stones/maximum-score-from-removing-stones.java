@@ -1,26 +1,14 @@
 class Solution {
     public int maximumScore(int a, int b, int c) {
-        PriorityQueue<Integer> pq = new PriorityQueue<>((x,y) -> y-x);
-        pq.add(a); pq.add(b); pq.add(c);
+        int[] nums = {a,b,c};
+        Arrays.sort(nums);
         
-        int maxScore = 0;
-        while(true) {
-            if (pq.size() >= 2) {
-                int x = pq.poll();
-                int y = pq.poll();
-                maxScore++;
-                x--;
-                y--;
-                if (x > 0) {
-                    pq.add(x);
-                }
-                if (y > 0) {
-                    pq.add(y);
-                }
-            } else {
-                break;
-            }
+        int sum = nums[0] + nums[1];
+        
+        if (sum >= nums[2]) {
+            return nums[2] + (nums[0]+nums[1]-nums[2])/2;
+        } else {
+            return sum;
         }
-        return maxScore;
     }
 }
