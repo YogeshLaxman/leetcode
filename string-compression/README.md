@@ -1,3 +1,4 @@
+[Discussion Post (created on 9/1/2021 at 16:6)](https://leetcode.com/problems/string-compression/solution/)  
 <h2>443. String Compression</h2><h3>Medium</h3><hr><div><p>Given an array of characters <code>chars</code>, compress it using the following algorithm:</p>
 
 <p>Begin with an empty string <code>s</code>. For each group of <strong>consecutive repeating characters</strong> in <code>chars</code>:</p>
