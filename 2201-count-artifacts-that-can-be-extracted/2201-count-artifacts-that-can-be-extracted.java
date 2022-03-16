@@ -1,37 +1,17 @@
 class Solution {
     public int digArtifacts(int n, int[][] artifacts, int[][] dig) {
-        Map<Integer, Integer> countMap = new HashMap<>();
-        Map<String, Integer> gridMap = new HashMap<>();
-        
-        for (int i=0; i<artifacts.length; i++) {
-            int r1i = artifacts[i][0];
-            int c1i = artifacts[i][1];
-            int r2i = artifacts[i][2];
-            int c2i = artifacts[i][3];
-            
-            int count = 0;
-            for (int j=r1i; j<=r2i; j++) {
-                for (int k=c1i; k<=c2i; k++) {
-                    count++;
-                    gridMap.put(j+":"+k, i);
+        HashSet<String> set = new HashSet<>();
+        for (int d[] : dig) set.add(d[0] + " " + d[1]);
+        int c = 0;
+        for (int a[] : artifacts) {
+            boolean done = true;
+            for (int i = a[0]; i <= a[2]; i++) {
+                for (int j = a[1]; j <= a[3]; j++) {
+                    if (!set.contains(i + " " + j)) done = false;
                 }
             }
-            countMap.put(i, count);
+            if (done) c++;
         }
-        
-        
-        int empty = 0;
-        for (int[] item: dig) {
-            String key = item[0]+":"+item[1];
-            if (gridMap.containsKey(key)) {
-                int gridKey = gridMap.get(key);
-                countMap.put(gridKey, countMap.get(gridKey) - 1);
-                if (countMap.get(gridKey) == 0) {
-                    empty++;
-                }
-            }
-        }
-        
-        return empty;
+        return c;
     }
 }
