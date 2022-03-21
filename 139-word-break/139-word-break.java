@@ -1,29 +1,27 @@
 class Solution {
+    int[] memo;
     public boolean wordBreak(String s, List<String> wordDict) {
-        Map<String, Boolean> cache = new HashMap<>();
-        return wordBreakDP(s, wordDict, cache);
+        memo = new int[s.length()];
+        Arrays.fill(memo, -1);
+        return wordBreak(s, new HashSet<>(wordDict), 0);
     }
-    private boolean wordBreakDP(String s, List<String> wordDict, Map<String, Boolean> cache) {
-        if(cache.containsKey(s)) {
-            return cache.get(s);
-        }
-        String currentSubstring = "";
-        for(int i=0; i < s.length(); i++) {
-            currentSubstring = currentSubstring + s.charAt(i);
-            if(wordDict.contains(currentSubstring)) {
-                if(i+1 == s.length()) {
-                    cache.put(s, true);
-                    // System.out.println("here");
-                    return true;
-                } else {
-                   if(wordBreakDP(s.substring(i+1), wordDict, cache)) {
-                        cache.put(s.substring(i+1), true);
-                        return true;   
-                   }
-                }
+    
+    public boolean wordBreak(String s, Set<String> wordDict, int index) {
+        if (index == s.length()) return true;
+        if (memo[index] != -1) return memo[index] == 1;
+        StringBuilder sb = new StringBuilder();
+        boolean ans = false;
+        for (int i=index; i < s.length(); i++) {
+            sb.append(s.charAt(i));
+            if (wordDict.contains(sb.toString())) {
+                ans = ans || wordBreak(s, wordDict, i+1);
+            }
+            if (ans) {
+                break;
             }
         }
-        cache.put(s, false);
-        return false;
+        memo[index] = ans ? 1 : 0;
+        
+        return ans;
     }
 }
