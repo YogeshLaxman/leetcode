@@ -1,27 +1,29 @@
 class Solution {
-    int[] memo;
     public boolean wordBreak(String s, List<String> wordDict) {
-        memo = new int[s.length()];
-        Arrays.fill(memo, -1);
-        return wordBreak(s, new HashSet<>(wordDict), 0);
+        Boolean[] dp = new Boolean[s.length()];    // dp[i] = if possible to use words from wordDict to make s up to index i
+               // array is initialize  to null to indicate not calculated yet
+        
+        return wordBreak(s, 0, wordDict, dp);
     }
     
-    public boolean wordBreak(String s, Set<String> wordDict, int index) {
-        if (index == s.length()) return true;
-        if (memo[index] != -1) return memo[index] == 1;
-        StringBuilder sb = new StringBuilder();
-        boolean ans = false;
-        for (int i=index; i < s.length(); i++) {
-            sb.append(s.charAt(i));
-            if (wordDict.contains(sb.toString())) {
-                ans = ans || wordBreak(s, wordDict, i+1);
-            }
-            if (ans) {
+    private boolean wordBreak(String s,int index,List<String> dict,Boolean[] present){
+        int wordLength= s.length();
+        if(index>=wordLength){
+            return true;
+        }
+        Boolean isPresent = present[index];
+        if(isPresent!=null){
+            return isPresent;
+        }
+        boolean mark = false;
+        for(int i=0;i<dict.size();i++){
+            String word = dict.get(i);
+            if(s.startsWith(word,index) && wordBreak(s,index+word.length(),dict,present)){
+                mark=true;
                 break;
             }
         }
-        memo[index] = ans ? 1 : 0;
-        
-        return ans;
+        present[index]=mark;
+        return mark;    
     }
 }
