@@ -1,52 +1,90 @@
-class Coordinate {
-    int r;
-    int c;
+class UnionFind {
+    int m, n;
+    int[] parent;
     
-    Coordinate(int r, int c) {
-        this.r = r;
-        this.c = c;
-    } 
+    UnionFind(int m, int n) {
+        this.m = m; this.n = n;
+        parent = new int[m*n];
+        
+        Arrays.fill(parent, -1);
+    }
+    
+    int findIndex(int i, int j) {
+        if (i == 0) return j;
+        return (i * n) + j;
+    }
+    
+    int find(int i, int j) {
+        int index = findIndex(i, j);
+        // System.out.println(i + ":" + j + ":" + index);
+        return find(index);
+    }
+    
+    int find(int index) {
+        // System.out.println(index);
+        if (parent[index] < 0) return index;
+        parent[index] = find(parent[index]);
+        return parent[index];
+    }
+    
+    void exclude(int i, int j) {
+        int index = findIndex(i, j);
+        
+        // positive impossible value
+        parent[index] = m * n;
+    }
+    
+    void union (int x, int y) {
+        int rankX = Math.abs(parent[x]);
+        int rankY = Math.abs(parent[y]);
+        
+        if (rankX > rankY) {
+            parent[y] = x;
+            parent[x] = -1 * (rankX + rankY);
+        } else {
+            parent[x] = y;
+            parent[y] = -1 * (rankX + rankY);
+        }
+    }
+    
+    int numberOfDisticSets() {
+        int count = 0;
+        for (int v: parent) {
+            if (v < 0) count++;
+        }
+        return count;
+    }
 }
 
 class Solution {
-    int[][] directions = {{0,1}, {1,0}, {-1,0}, {0,-1}};
-    
     public int numIslands(char[][] grid) {
-        int m = grid.length, n = grid[0].length, numberOfIslands = 0;
+        int m = grid.length, n = grid[0].length;
+        int[][] directions = {{1,0}, {0,1}, {0,-1}, {-1,0}};
         
-        boolean[][] visited = new boolean[m][n];
+        UnionFind uf = new UnionFind(m, n);
+        
+        
         for (int i=0; i<m; i++) {
             for (int j=0; j<n; j++) {
-                if (grid[i][j] == '1' && !visited[i][j]) {
-                    numberOfIslands++;
-                    bfs(grid, i, j, visited);
+                if (grid[i][j] == '0') {
+                    uf.exclude(i, j);
+                } else {
+                    for (int[] dir: directions) {
+                        int x = i + dir[0];
+                        int y = j + dir[1];
+                        
+                        if (x >=0 && x < m && y >= 0 && y < n && grid[x][y] == '1') {
+                            int parent1 = uf.find(x, y);
+                            int parent2 = uf.find(i, j);
+                            if (parent1 != parent2) {
+                                uf.union(parent1, parent2);
+                            }
+                        }
+                    }
                 }
             }
         }
         
-        return numberOfIslands;
+        return uf.numberOfDisticSets();
     }
-    
-    private void bfs(char[][] grid, int i, int j, boolean[][] visited) {
-        visited[i][j] = true;
-        int m = grid.length, n = grid[0].length;
-        
-        Queue<Coordinate> queue = new LinkedList<Coordinate>();
-        queue.add(new Coordinate(i, j));
-        
-        while (!queue.isEmpty()) {
-            Coordinate coordinate = queue.poll();
-            
-            for (int dir[]: directions) {
-                int x = coordinate.r + dir[0];
-                int y = coordinate.c + dir[1];
-
-                if (x >= 0 && x < m && y >=0 && y < n && grid[x][y] == '1' && !visited[x][y]) {
-                    visited[x][y] = true;
-                    queue.add(new Coordinate(x, y));
-                }
-        }
-        }
-        
-    } 
 }
