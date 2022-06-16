@@ -33,6 +33,8 @@ class UnionFind {
 
 class Solution {
     public boolean validTree(int n, int[][] edges) {
+        if (edges.length != n-1) return false;
+        
         UnionFind uf = new UnionFind(n);
         for (int[] edge: edges) {
             int u = uf.find(edge[0]);
