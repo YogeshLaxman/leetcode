@@ -1,37 +1,50 @@
-class Solution {
-    public int countComponents(int n, int[][] edges) {
-        int numComponents = 0;
-        List<List<Integer>> adjList = new ArrayList<>();
-        
-        for (int i=0; i<n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-        
-        for (int[] edge: edges) {
-            adjList.get(edge[0]).add(edge[1]);
-            adjList.get(edge[1]).add(edge[0]);
-        }
-        
-        boolean[] visited = new boolean[n]; 
-        
-        for (int i=0; i<n; i++) {
-            if (!visited[i]) {
-                numComponents++;
-                visited[i] = true;
-                dfs(adjList, visited, i);
-            }
-        }
-        
-        return numComponents;
+class UnionFind {
+    int[] parent;
+    
+    UnionFind(int n) {
+        parent = new int[n];
+        Arrays.fill(parent, -1);
     }
     
-    private void dfs(List<List<Integer>> adjList, boolean[] visited, int i) {
-        
-        for (int neighbor: adjList.get(i)) {
-            if (!visited[neighbor]) {
-                visited[neighbor] = true;
-                dfs(adjList, visited, neighbor);
+    int find(int x) {
+        if (parent[x] < 0) return x;
+        return parent[x] = find(parent[x]);
+    }
+    
+    void union(int x, int y) {
+        if (parent[x] < parent[y]) {
+            parent[x] += parent[y];
+            parent[y] = x;
+        } else {
+            parent[y] += parent[x];
+            parent[x] = y;
+        }
+    }
+    
+    int getNumberOfDisconnectedSets() {
+        int count = 0;
+        for (int p: parent) {
+            if (p < 0) {
+                count++;
             }
         }
+        
+        return count;
+    }
+}
+class Solution {
+    public int countComponents(int n, int[][] edges) {
+        UnionFind uf = new UnionFind(n);
+        
+        for (int[] edge: edges) {
+            int x = uf.find(edge[0]);    
+            int y = uf.find(edge[1]);    
+            
+            if (x != y) {
+                uf.union(x, y);
+            }
+        }
+        
+        return uf.getNumberOfDisconnectedSets();
     }
 }
