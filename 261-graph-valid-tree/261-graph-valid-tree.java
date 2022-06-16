@@ -1,36 +1,47 @@
+class UnionFind {
+    int[] parent;
+    
+    UnionFind(int n) {
+        parent = new int[n];
+        Arrays.fill(parent, -1);
+    }
+    
+    int find(int x) {
+        if (parent[x] < 0) return x;
+        return parent[x] = find(parent[x]);
+    }
+    
+    void union(int x, int y) {
+        if (Math.abs(parent[x]) > Math.abs(parent[y])) {
+            parent[x] += parent[y];
+            parent[y] = x;
+        } else {
+            parent[y] += parent[x];
+            parent[x] = y;
+        }
+    }
+    
+    int getNumberOfDistincSets() {
+        int count = 0;
+        for (int p: parent) {
+            if (p < 0) count++;
+        }
+        
+        return count;
+    }
+}
+
 class Solution {
     public boolean validTree(int n, int[][] edges) {
-        Map<Integer, Set<Integer>> adjList = new HashMap<>();
-        
-        Set<Integer> notVisited = new HashSet<>();
-        for (int i=0; i<n; i++) {
-            notVisited.add(i);
-            adjList.put(i, new HashSet<>());
-        }
-        
+        UnionFind uf = new UnionFind(n);
         for (int[] edge: edges) {
-            adjList.get(edge[0]).add(edge[1]);
-            adjList.get(edge[1]).add(edge[0]);
-        }
-        
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(0);
-        notVisited.remove(0);
-        
-        while (!queue.isEmpty()) {
-            int nextNode = queue.poll();
+            int u = uf.find(edge[0]);
+            int v = uf.find(edge[1]);
             
-            for (int neighbor: adjList.get(nextNode)) {
-                if (notVisited.contains(neighbor)) {
-                    notVisited.remove(neighbor);
-                    queue.add(neighbor);
-                    adjList.get(neighbor).remove(nextNode);
-                } else {
-                    return false;
-                }
-            }
+            if (u == v) return false;
+            uf.union(u, v);
         }
         
-        return notVisited.isEmpty();
+        return uf.getNumberOfDistincSets() == 1;
     }
 }
