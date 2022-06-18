@@ -10,13 +10,8 @@ class Solution {
                 if (coin > i) {
                     break;
                 }
-                for(int j=1; j<=i/coin; j++) {
-                    
-                    int rem = i - j * coin;
-                    // System.out.println(rem);
-                    if (dp[rem] != Integer.MAX_VALUE) {
-                        dp[i] = Math.min(dp[i], j + dp[rem]);    
-                    }
+                 if (dp[i-coin] != Integer.MAX_VALUE) {
+                    dp[i] = Math.min(dp[i], 1 + dp[i-coin]);    
                 }
                 
             }
