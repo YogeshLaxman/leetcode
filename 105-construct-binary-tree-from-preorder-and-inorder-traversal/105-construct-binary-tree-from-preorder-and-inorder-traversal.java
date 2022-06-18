@@ -15,32 +15,28 @@
  */
 class Solution {
     public TreeNode buildTree(int[] preorder, int[] inorder) {
-        return buildTree(preorder, inorder, 0, preorder.length-1, 0, inorder.length-1);
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i=0; i<inorder.length; i++) {
+            map.put(inorder[i], i);
+        }
+        
+        return buildTree(preorder, inorder, 0, preorder.length-1, 0, inorder.length-1, map);
     }
     
-    public TreeNode buildTree(int[] preorder, int[] inorder, int i ,int j, int m, int n) {
-        // System.out.println(i + ":" + j + ":" + m + ":" + n);
+    public TreeNode buildTree(int[] preorder, int[] inorder, int i ,int j, int m, int n, Map<Integer, Integer> inOrderMap) {
+        
         if (i > j || m > n) return null;
         
         if (i == j && m == n && inorder[m] == preorder[i]) {
             return new TreeNode(inorder[m]);
         }
         
-        int x = -1;
-        int num = 0;
-        for (int k=m; k<=n; k++) {
-            if (inorder[k] == preorder[i]) {
-                x = k;
-                break;
-            }
-            num++;
-        }
-        
-        // System.out.println(num);
+        int x = inOrderMap.get(preorder[i]);
+        int num = x-m;       
         TreeNode node = new TreeNode(inorder[x]);
-        
-        node.left = buildTree(preorder, inorder, i+1, i+num, m, x-1);
-        node.right = buildTree(preorder, inorder, i+num+1, j, x+1, n);
+        // System.out.println(preorder[i] + ":" + x + ":" + num);
+        node.left = buildTree(preorder, inorder, i+1, i+num, m, x-1, inOrderMap);
+        node.right = buildTree(preorder, inorder, i+num+1, j, x+1, n, inOrderMap);
         
         return node;
     }
