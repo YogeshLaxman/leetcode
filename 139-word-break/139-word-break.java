@@ -2,6 +2,8 @@ class Solution {
     public boolean wordBreak(String s, List<String> wordDict) {
         Boolean[] memo = new Boolean[s.length()];
         Set<String> wordDictSet = new HashSet<>(wordDict);
+        
+        
         return wordBreak(s, wordDictSet, 0, memo);
     }
     
@@ -12,12 +14,13 @@ class Solution {
             return memo[index];
         }
         
-        String substring = "";
+        StringBuilder substring = new StringBuilder("");
         boolean ans = false;
         
         for (int i=index; i<s.length(); i++) {
-            substring += s.charAt(i);
-            if (wordDictSet.contains(substring)) {
+            substring.append(s.charAt(i));
+            // System.out.println(substring);
+            if (wordDictSet.contains(substring.toString())) {
                 ans = ans || wordBreak(s, wordDictSet, i+1, memo);
             }
         }
