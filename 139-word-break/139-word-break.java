@@ -1,27 +1,22 @@
 class Solution {
     public boolean wordBreak(String s, List<String> wordDict) {
-        Boolean[] memo = new Boolean[s.length()];
+        int n = s.length();
+        boolean[] memo = new boolean[n+1];
+        memo[n] = true;
+        
         Set<String> wordDictSet = new HashSet<>(wordDict);
         
-        
-        return wordBreak(s, wordDictSet, 0, memo);
-    }
-    
-    private boolean wordBreak(String s, Set<String> wordDictSet, int index, Boolean[] memo) {
-        if (index == s.length()) return true;
-        
-        if (memo[index] != null) {
-            return memo[index];
-        }
-        
-        boolean ans = false;
-        
-        for (String word: wordDictSet) {
-            if (s.indexOf(word, index) == index) {
-                ans = ans || wordBreak(s, wordDictSet, index + word.length(), memo);
+        for (int i=n-1; i>=0; i--) {
+            String left = "";
+            for (int j=i; j<n; j++) {
+                left = left + s.charAt(j);
+                if (wordDictSet.contains(left)) {
+                    memo[i] = memo[i] || memo[j+1];
+                }
+                if (memo[i]) break;
             }
         }
         
-        return memo[index] = ans;
+        return memo[0];
     }
 }
