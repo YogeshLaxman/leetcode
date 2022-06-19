@@ -14,14 +14,11 @@ class Solution {
             return memo[index];
         }
         
-        StringBuilder substring = new StringBuilder("");
         boolean ans = false;
         
-        for (int i=index; i<s.length(); i++) {
-            substring.append(s.charAt(i));
-            // System.out.println(substring);
-            if (wordDictSet.contains(substring.toString())) {
-                ans = ans || wordBreak(s, wordDictSet, i+1, memo);
+        for (String word: wordDictSet) {
+            if (s.indexOf(word, index) == index) {
+                ans = ans || wordBreak(s, wordDictSet, index + word.length(), memo);
             }
         }
         
