@@ -7,10 +7,10 @@ class Solution {
         Set<String> wordDictSet = new HashSet<>(wordDict);
         
         for (int i=n-1; i>=0; i--) {
-            String left = "";
+            StringBuilder left = new StringBuilder();
             for (int j=i; j<n; j++) {
-                left = left + s.charAt(j);
-                if (wordDictSet.contains(left)) {
+                left = left.append(s.charAt(j));
+                if (wordDictSet.contains(left.toString())) {
                     memo[i] = memo[i] || memo[j+1];
                 }
                 if (memo[i]) break;
