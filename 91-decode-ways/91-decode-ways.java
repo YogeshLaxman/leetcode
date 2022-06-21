@@ -4,25 +4,7 @@ class Solution {
         int n = s.length();
         int start = 0;
         
-        int ans = 1;
-        for (int i=0; i<n; i++) {
-            if (s.charAt(i) == '0') {
-                if (s.charAt(i-1) == '1' || s.charAt(i-1) == '2') {
-                    String subString = s.substring(start, i-1);
-                    if (!subString.equals(""))
-                    ans = ans * numDecodingsDP(s.substring(start, i-1));    
-                    start = i+1;
-                } else {
-                    return 0;
-                }
-            }
-        }
-        if (start < n) {
-            // System.out.println(start);
-            ans = ans * numDecodingsDP(s.substring(start, n));
-        }
-        
-        return ans;
+        return numDecodingsDP(s);
     }
     
     private int numDecodingsDP(String s) {
@@ -35,7 +17,7 @@ class Solution {
     
     private int numDecodingsDP(String s, int index, int[] memo) {
         if (index >= s.length()) return 1;
-        
+        if (s.charAt(index) == '0') return 0;
         if (memo[index] != -1) return memo[index];
         
         int ans = numDecodingsDP(s, index+1, memo);
