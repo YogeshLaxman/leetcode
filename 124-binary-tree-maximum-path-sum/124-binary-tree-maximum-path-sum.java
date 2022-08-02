@@ -4,7 +4,7 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode() {}
+ *     TreeNode() {};
  *     TreeNode(int val) { this.val = val; }
  *     TreeNode(int val, TreeNode left, TreeNode right) {
  *         this.val = val;
@@ -14,25 +14,28 @@
  * }
  */
 class Solution {
-    int max;
-    public int maxPathSum(TreeNode root) {
-        max = root.val;
-        pathSum(root);
-        
-        return max;
-    }
+    int mainAns = Integer.MIN_VALUE;
     
-    private int pathSum(TreeNode root) {
+    public int maxPathSum(TreeNode root) {
+        maxPathSumDP(root);
+        
+        return mainAns;
+    }
+    public int maxPathSumDP(TreeNode root) {
         if (root == null) return 0;
         
-        int left = pathSum(root.left);
-        int right = pathSum(root.right);
+        int leftAns = maxPathSumDP(root.left);
+        int rightAns = maxPathSumDP(root.right);
         
-        max = Math.max(max, left + root.val);
-        max = Math.max(max, right + root.val);
-        max = Math.max(max, left + right + root.val);
-        max = Math.max(max, root.val);
+        int ans = root.val;
         
-        return Math.max(root.val,  Math.max(left, right) + root.val);
+        mainAns = Math.max(mainAns, root.val + leftAns + rightAns);
+        
+        ans = Math.max(ans, root.val + leftAns);
+        ans = Math.max(ans, root.val + rightAns);
+        
+        mainAns = Math.max(ans, mainAns);
+        
+        return ans;
     }
 }
