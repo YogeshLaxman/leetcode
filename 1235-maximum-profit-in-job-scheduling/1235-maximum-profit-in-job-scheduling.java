@@ -18,7 +18,7 @@ class Solution {
         for (int i=0; i<n; i++) {
             items[i] = new Item(startTime[i], endTime[i], profit[i]);
         }
-        Arrays.sort(items, (a,b) -> a.startTime - b.startTime);
+        Arrays.sort(items, (a,b) -> a.startTime == b.startTime ? a.endTime - b.endTime : a.startTime - b.startTime);
         
         int[] memo = new int[n];
         Arrays.fill(memo, -1);
@@ -33,10 +33,20 @@ class Solution {
         int ans = jobScheduling(items, currentIndex+1, memo);
         
         int anotherPossibleAns = items[currentIndex].profit;
-        for (int i=currentIndex; i<n; i++) {
-            if (items[i].startTime >= items[currentIndex].endTime) {
-                anotherPossibleAns += jobScheduling(items, i, memo);
-                break;
+        
+        int index = 
+            Arrays.binarySearch(items, 
+                                new Item(items[currentIndex].endTime, items[currentIndex].endTime, 0), 
+                                (a,b) -> a.startTime == b.startTime ? a.endTime - b.endTime : a.startTime - b.startTime);
+        
+        if (index < 0) {
+            index = (index*-1) -1;
+        }
+        
+        if (index < n) {
+            anotherPossibleAns += jobScheduling(items, index, memo);
+            if (items[index].startTime < items[currentIndex].endTime) {
+                System.out.println("Something is wrong" + items[index].startTime + ":" + items[currentIndex].endTime);
             }
         }
         
