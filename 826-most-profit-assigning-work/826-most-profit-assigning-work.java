@@ -19,7 +19,7 @@ class Solution {
             difficultProfitArray[i][2] = max;
         }
         
-        System.out.println(Arrays.deepToString(difficultProfitArray));
+        // System.out.println(Arrays.deepToString(difficultProfitArray));
         
         int ans = 0;
         for (int skill: worker) {
