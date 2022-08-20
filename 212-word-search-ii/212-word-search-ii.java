@@ -1,9 +1,9 @@
 class Node {
-    Set<String> words;
+    String word;
     Node[] childNodes;
     
     Node() {
-        words = new HashSet<>();
+        word = null;
         childNodes = new Node[26];
     }
 }
@@ -20,7 +20,7 @@ class Trie {
     
     public void add(String word, int index, Node node) {
         if (index == word.length()) {
-            node.words.add(word);
+            node.word = word;
             return;
         }
         
@@ -66,7 +66,10 @@ class Solution {
         } 
         
         Node newParent = parent.childNodes[currentIndex];
-        ans.addAll(newParent.words);
+        if (newParent.word != null) {
+            ans.add(newParent.word);    
+        }
+        
         
         int m = board.length, n = board[0].length;
         
