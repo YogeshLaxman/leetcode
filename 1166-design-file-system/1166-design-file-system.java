@@ -9,13 +9,13 @@ class FileSystem {
         String[] split = path.split("/");
         int n = split.length;
         
-        System.out.println(Arrays.toString(split));
+        
         if (n == 0) return false;
         
         String prefix = "";
         for (int i=1; i < n-1; i++) {
             prefix = prefix + "/" + split[i];
-            System.out.println(prefix);
+            
             if (!map.containsKey(prefix)) {
                 return false;
             }
