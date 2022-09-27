@@ -7,6 +7,8 @@ class Node {
     int mid;
     int right;
     
+    int count;
+    
     Node(int left, int right) {
         this.left = left;
         this.mid = (left + right) / 2;
@@ -48,9 +50,16 @@ class SegmentTree {
             return 0;
         }
         
+        if (node.left == start && node.right == end) {
+            int rem = (end - start) - node.count;
+            node.count = end - start;
+            node.fullyPainted = true;    
+        }
+        
         if (node.left+1 == node.right) {
-            // System.out.println("painted" + start +":" + end);
+            
             node.fullyPainted = true;
+            node.count = 1;
             return 1;
         }
         
@@ -69,7 +78,16 @@ class SegmentTree {
             node.fullyPainted = true;
         }
         
-        // System.out.println(node.left + ":" + node.right + "("+ node.fullyPainted + "-" + start + "," + end);
+        int count = 0;
+        if (node.leftNode != null) {
+            count += node.leftNode.count;
+        }
+        
+        if (node.rightNode != null) {
+            count += node.rightNode.count;
+        }
+        
+        node.count = count;
         
         return ans;
     }
