@@ -1,18 +1,15 @@
 class Cell {
     int row;
     int col;
-    Set<String> seen;
     int k;
     int steps;
     
-    Cell(int row, int col, int k, int s, Set<String> seen) {
+    Cell(int row, int col, int k, int s) {
         this.row = row;
         this.col = col;
         
         this.k = k;
         this.steps = s;
-        
-        this.seen = seen;
     }
 }
 
@@ -23,11 +20,9 @@ class Solution {
         Set<String> visited = new HashSet<>();
         Queue<Cell> queue = new LinkedList<>();
         
-        Set<String> seen = new HashSet<>();
         visited.add("0#0#" + k);
-        seen.add("0#0");
         
-        queue.add(new Cell(0, 0, k, 0, seen));
+        queue.add(new Cell(0, 0, k, 0));
         
         int[][] directions = {{0,1}, {1,0}, {0,-1}, {-1,0}};
         while(!queue.isEmpty()) {
@@ -42,15 +37,13 @@ class Solution {
                 int y = cell.col + dir[1];
                 
                 String key = x + "#" + y;
-                if (x >= 0 && x < m && y >= 0 && y < n && !cell.seen.contains(key)) {
+                if (x >= 0 && x < m && y >= 0 && y < n) {
                     String visitedKey = x + "#" + y + "#" + cell.k;
                     if (visited.contains(visitedKey)) {
                         continue;
                     }
                     
                     visited.add(visitedKey);
-                    Set<String> newSeen = new HashSet<>(cell.seen);
-                    newSeen.add(key);
                     
                     int newK = cell.k;
                     if (grid[x][y] == 1) {
@@ -64,7 +57,7 @@ class Solution {
                     if (x == m-1 && y == n-1) {
                         return cell.steps + 1;
                     }
-                    queue.add(new Cell(x, y, newK, cell.steps+1, newSeen));
+                    queue.add(new Cell(x, y, newK, cell.steps+1));
                 }
             }
         }
