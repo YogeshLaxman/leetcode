@@ -3,6 +3,7 @@ class SnapshotArray {
     Map<Integer, TreeMap<Integer, Integer>> indexToSnapIdtoValueMap;
     int currentSnapId = 0;
     
+    // O(length)
     public SnapshotArray(int length) {
         indexToSnapIdtoValueMap = new HashMap<>();
         for (int i=0; i<length; i++) {
@@ -12,15 +13,18 @@ class SnapshotArray {
         }
     }
     
+    // O(logn)
     public void set(int index, int val) {
         indexToSnapIdtoValueMap.get(index).put(currentSnapId, val);
     }
     
+    //O(1)
     public int snap() {
         currentSnapId++;
         return currentSnapId-1;
     }
     
+    // O(logn)
     public int get(int index, int snap_id) {
         // System.out.println(indexToSnapIdtoValueMap);
         // System.out.println(index + ":" + snap_id);
