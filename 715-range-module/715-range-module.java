@@ -1,51 +1,38 @@
 class RangeModule {
-    List<int[]> intervals;
     
+    TreeMap<Integer, Integer> rangeMap;
     public RangeModule() {
-        intervals = new ArrayList<>();
+        rangeMap = new TreeMap<>();
     }
     
     public void addRange(int left, int right) {
-        right--;
+        Integer leftIntervalKey = rangeMap.floorKey(left);
+        Integer rightIntervalKey = rangeMap.floorKey(right);
         
-        List<int[]> newIntervals = new ArrayList<>();
-        boolean added = false;
-        
-        for (int[] interval: intervals) {
-            boolean leftInside = interval[0] <= left && left <= interval[1];
-            boolean rightInside = interval[0] <= right && right <= interval[1];
-            boolean fullInside = left <= interval[0] &&  interval[1] <= right;
-            
-            if (leftInside || rightInside || fullInside || right+1 == interval[0] || interval[1] + 1== left) {
-                left = Math.min(interval[0], left);
-                right = Math.max(interval[1], right);
-            } else {
-                if (right < interval[0] && !added) {
-                    newIntervals.add(new int[] {left, right});
-                    added = true;
-                }
-                newIntervals.add(interval);
+        if (leftIntervalKey != null) {
+            if (rangeMap.get(leftIntervalKey) >= left) {
+                left = leftIntervalKey;
             }
         }
         
-        if (!added) {
-            newIntervals.add(new int[] {left, right});
+        if (rightIntervalKey != null) {
+            right = Math.max(right, rangeMap.get(rightIntervalKey));
         }
         
-        intervals = newIntervals;
+        Map<Integer, Integer> subMap = rangeMap.subMap(left, true, right, true);
+        Set<Integer> set = new HashSet(subMap.keySet());
+        rangeMap.keySet().removeAll(set);
+        
+        rangeMap.put(left, right);
         
         // System.out.println("After addition: (" + left +", " + right + ")");
-        // print();
+        // System.out.println(rangeMap);
     }
     
     public boolean queryRange(int left, int right) {
-        right--;
-        
-        for (int[] interval: intervals) {
-            boolean leftInside = interval[0] <= left && left <= interval[1];
-            boolean rightInside = interval[0] <= right && right <= interval[1];
-            
-            if (leftInside && rightInside) {
+        Integer leftIntervalKey = rangeMap.floorKey(left);
+        if (leftIntervalKey != null) {
+            if (rangeMap.get(leftIntervalKey) >= left && rangeMap.get(leftIntervalKey) >= right)  {
                 return true;
             }
         }
@@ -54,39 +41,29 @@ class RangeModule {
     }
     
     public void removeRange(int left, int right) {
-        right--;
+        Integer leftIntervalKey = rangeMap.floorKey(left);
+        Integer rightIntervalKey = rangeMap.floorKey(right);
         
-        List<int[]> newIntervals = new ArrayList<>();
-        
-        for (int[] interval: intervals) {
-            boolean leftInside = interval[0] <= left && left <= interval[1];
-            boolean rightInside = interval[0] <= right && right <= interval[1];
-            boolean fullInside = left <= interval[0] &&  interval[1] <= right;
-            
-            if (leftInside || rightInside || fullInside) {
-                if (interval[0] <= left-1) {
-                    newIntervals.add(new int[] {interval[0], left-1});    
-                }
-                if (right+1 <= interval[1]) {
-                    newIntervals.add(new int[] {right+1, interval[1]});
-                }
-            } else {
-                newIntervals.add(interval);
+        if (rightIntervalKey != null) {
+            if (right < rangeMap.get(rightIntervalKey)) {
+                rangeMap.put(right, rangeMap.get(rightIntervalKey));
             }
         }
         
-        intervals = newIntervals;
-        
-        // System.out.println("After removal: (" + left +", " + right + ")");
-        // print();
-    }
-    
-    void print() {
-        for (int[] interval: intervals) {
-            System.out.print(Arrays.toString(interval) + ", ");
+        if (leftIntervalKey != null) {
+            if (leftIntervalKey < left && rangeMap.get(leftIntervalKey) >= left) {
+                rangeMap.put(leftIntervalKey, left);
+            }
         }
         
-        System.out.println();
+        
+        
+        Map<Integer, Integer> subMap = rangeMap.subMap(left, true, right, false);
+        Set<Integer> set = new HashSet(subMap.keySet());
+        rangeMap.keySet().removeAll(set);
+        
+        // System.out.println("After removal: (" + left +", " + right + ")");
+        //System.out.println(rangeMap);
     }
 }
 
