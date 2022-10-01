@@ -1,24 +1,35 @@
 class Solution {
     public int findMinDifference(List<String> timePoints) {
-        List<Integer> list = new ArrayList<>();
+        boolean[] timeWindows = new boolean[24*60];
         
+        int minTime = Integer.MAX_VALUE;
         for (String time: timePoints) {
             int h = Integer.parseInt(time.substring(0,2));
             int m = Integer.parseInt(time.substring(3));
             
-            list.add(h*60 + m);
+            int timeInMins = h*60+m;
+            if (timeWindows[timeInMins]) {
+                return 0;
+            }
+            timeWindows[timeInMins] = true;
+            
+            minTime= Math.min(timeInMins, minTime);
+            
         }
         
-        Collections.sort(list);
-        
-        list.add(24*60 + list.get(0));
-        
-        int min = Integer.MAX_VALUE;
-        for (int i=1; i<list.size(); i++) {
-            int diff = list.get(i) - list.get(i-1);
-            min = Math.min(min, diff);
+        int ans = Integer.MAX_VALUE;
+        int prev = minTime;
+        for (int i=minTime+1; i<24*60; i++) {
+            if (timeWindows[i]) {
+                int diff = i - prev;
+                prev = i;
+                ans = Math.min(ans, diff);
+            }
         }
         
-        return min;
+        minTime += 24*60;
+        ans = Math.min(ans, minTime - prev);
+        
+        return ans;
     }
 }
