@@ -36,7 +36,7 @@ class Solution {
             int leftIndex = right[queries[i][0]];
             int rightIndex = left[queries[i][1]];
             
-            if (leftIndex == -1 || rightIndex == -1 || leftIndex > queries[i][1] || rightIndex < queries[i][0]) {
+            if (leftIndex == -1 || rightIndex == -1 || leftIndex >= rightIndex) {
                 continue;
             }
             
