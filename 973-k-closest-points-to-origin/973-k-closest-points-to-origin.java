@@ -1,4 +1,6 @@
 class Solution {
+    Random rand = new Random();
+    
     public int[][] kClosest(int[][] points, int k) {
         // return kClosestMinPQ(points, k);
         // return kClosestMaxPQ(points, k);
@@ -73,6 +75,10 @@ class Solution {
     }
     
     private int findPivot(int[][] points, int low, int high) {
+        int n = rand.nextInt(high-low+1);
+        int pivotIndex = low + n;
+        swap(points, low, pivotIndex);
+        
         int i = low, j = low+1;
         
         while (j <= high) {
