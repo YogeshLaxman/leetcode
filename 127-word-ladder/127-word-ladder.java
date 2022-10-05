@@ -1,57 +1,79 @@
+class Pair {
+    String word;
+    int steps;
+    
+    Pair (String word, int steps) {
+        this.word = word;
+        this.steps = steps;
+    }
+}
 class Solution {
-    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-
-        // Since all words are of same length.
-        int L = beginWord.length();
-
-        // Dictionary to hold combination of words that can be formed,
-        // from any given word. By changing one letter at a time.
-        Map<String, List<String>> allComboDict = new HashMap<>();
-
-        wordList.forEach( word -> {
-            for (int i = 0; i < L; i++) {
-                // Key is the generic word
-                // Value is a list of words which have the same intermediate generic word.
-                String newWord = word.substring(0, i) + '*' + word.substring(i + 1, L);
-                List<String> transformations = allComboDict.getOrDefault(newWord, new ArrayList<>());
-                transformations.add(word);
-                allComboDict.put(newWord, transformations);
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {        
+        Map<String, Set<String>> wordMap = new HashMap<>();
+        for (String word: wordList) {
+            Set<String> possibleWords = getAllPossibleStrings(word);
+            for (String possibleWord: possibleWords) {
+                if (!wordMap.containsKey(possibleWord)) {
+                    wordMap.put(possibleWord, new HashSet<>());
+                }
+                wordMap.get(possibleWord).add(word);
             }
-        });
-
-        // Queue for BFS
-        Queue<Pair<String, Integer>> Q = new LinkedList<>();
-        Q.add(new Pair(beginWord, 1));
-
-        // Visited to make sure we don't repeat processing same word.
-        Map<String, Boolean> visited = new HashMap<>();
-        visited.put(beginWord, true);
-
-        while (!Q.isEmpty()) {
-            Pair<String, Integer> node = Q.remove();
-            String word = node.getKey();
-            int level = node.getValue();
-            for (int i = 0; i < L; i++) {
-
-                // Intermediate words for current word
-                String newWord = word.substring(0, i) + '*' + word.substring(i + 1, L);
-
-                // Next states are all the words which share the same intermediate state.
-                for (String adjacentWord : allComboDict.getOrDefault(newWord, new ArrayList<>())) {
-                    // If at any point if we find what we are looking for
-                    // i.e. the end word - we can return with the answer.
-                    if (adjacentWord.equals(endWord)) {
-                        return level + 1;
+        }
+        
+        Queue<Pair> queue = new LinkedList<>();
+        Set<String> seen = new HashSet<>();
+        
+        queue.add(new Pair(beginWord, 1));
+        seen.add(beginWord);
+        
+        
+        while (!queue.isEmpty()) {
+            Pair pair = queue.poll();
+            String currentWord = pair.word;
+            int steps = pair.steps;
+            
+            Set<String> possibleWords = getAllPossibleStrings(currentWord);
+            for (String possibleWord: possibleWords) {
+                for (String word: wordMap.getOrDefault(possibleWord, new HashSet<>()))
+                    if (!seen.contains(word)) {
+                        if (word.equals(endWord)) {
+                            return steps+1;
+                        } else {
+                            // System.out.println("Adding " + word + " : " + (steps+1));
+                            queue.add(new Pair(word, steps+1));
+                            seen.add(word);
+                        }
                     }
-                    // Otherwise, add it to the BFS Queue. Also mark it visited
-                    if (!visited.containsKey(adjacentWord)) {
-                        visited.put(adjacentWord, true);
-                        Q.add(new Pair(adjacentWord, level + 1));
-                    }
+            }
+        }
+        
+        return 0;
+    }
+    
+    private Set<String> getAllPossibleStrings(String word) {
+        StringBuilder sb = new StringBuilder(word);
+        
+        Set<String> ans = new HashSet<>();
+        for (int i=0; i<word.length(); i++) {
+            sb.setCharAt(i, '*');
+            ans.add(sb.toString());
+            sb.setCharAt(i, word.charAt(i));
+        }
+        
+        return ans;
+    }
+    private boolean diff(String word1, String word2) {
+        boolean oneUsed = false;
+        for (int i=0; i<word1.length(); i++) {
+            if (word1.charAt(i) != word2.charAt(i)) {
+                if (oneUsed) {
+                    return false;
+                } else {
+                    oneUsed = true;
                 }
             }
         }
-
-        return 0;
+        
+        return true;
     }
 }
