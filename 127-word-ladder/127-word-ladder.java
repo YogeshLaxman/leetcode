@@ -9,36 +9,35 @@ class Pair {
 }
 class Solution {
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        /* Set<String> wordSet = new HashSet<>();
+        Set<String> wordSet = new HashSet<>();
         for (String word: wordList) {
             wordSet.add(word);
-        } */
+        }
         
         Queue<Pair> queue = new LinkedList<>();
-        Set<String> seen = new HashSet<>();
         
-        seen.add(beginWord);
         queue.add(new Pair(beginWord, 1));
         
         
         while (!queue.isEmpty()) {
+            Set<String> newWordSet = new HashSet<>(wordSet);
             Pair pair = queue.poll();
             String currentWord = pair.word;
             int steps = pair.steps;
             
-            for (String word: wordList) {
-                if (!seen.contains(word)) {
-                    if (diff(currentWord, word)) {
-                        if (word.equals(endWord)) {
-                            return steps+1;
-                        } else {
-                            // System.out.println("Adding " + word + " : " + (steps+1));
-                            queue.add(new Pair(word, steps+1));
-                            seen.add(word);
-                        }
+            for (String word: wordSet) {
+                if (diff(currentWord, word)) {
+                    if (word.equals(endWord)) {
+                        return steps+1;
+                    } else {
+                        // System.out.println("Adding " + word + " : " + (steps+1));
+                        queue.add(new Pair(word, steps+1));
+                        newWordSet.remove(word);
                     }
                 }
             }
+            
+            wordSet = newWordSet;
         }
         
         return 0;
